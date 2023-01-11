@@ -11,9 +11,7 @@ export class VisitService {
   ) {}
 
   async editCount(): Promise<Visit[]> {
-    console.log('one');
     const result = await this.visitRepository.find();
-    console.log('two');
     if (!result.length) {
       await this.visitRepository.save({
         count: 1,

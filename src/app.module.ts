@@ -36,7 +36,8 @@ import { VisitModule } from './daks/visit/visit.module';
             database: process.env.DB_NAME,
           }),
       entities: [Visit, Action],
-      synchronize: process.env.NODE_ENV !== 'production',
+      // synchronize: process.env.NODE_ENV !== 'production'
+      synchronize: true,
       logging:
         process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
       autoLoadEntities: true,
