@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as Joi from 'joi';
+import { Action } from 'rxjs/internal/scheduler/Action';
 import { ActionModule } from './daks/action/action.module';
 
 import { Visit } from './daks/visit/visit.entity';
@@ -34,7 +35,7 @@ import { VisitModule } from './daks/visit/visit.module';
             password: process.env.DB_PASSWORD,
             database: process.env.DB_NAME,
           }),
-      entities: [Visit],
+      entities: [Visit, Action],
       synchronize: process.env.NODE_ENV !== 'production',
       logging:
         process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
