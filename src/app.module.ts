@@ -4,9 +4,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import * as Joi from 'joi';
 import { Action } from 'rxjs/internal/scheduler/Action';
 import { ActionModule } from './daks/action/action.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 import { Visit } from './daks/visit/visit.entity';
 import { VisitModule } from './daks/visit/visit.module';
+import { DashboardModule } from './stepn/dashboard/dashboard.module';
+import { ScheduleModule as CronModule } from './stepn/schedule/schedule.module';
 
 @Module({
   imports: [
@@ -42,8 +45,11 @@ import { VisitModule } from './daks/visit/visit.module';
         process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
       autoLoadEntities: true,
     }),
+    ScheduleModule.forRoot(),
     VisitModule,
     ActionModule,
+    DashboardModule,
+    CronModule,
   ],
 })
 export class AppModule {}
