@@ -25,6 +25,7 @@ import { ScheduleModule as CronModule } from './stepn/schedule/schedule.module';
         DB_USERNAME: Joi.string(),
         DB_PASSWORD: Joi.string(),
         DB_NAME: Joi.string(),
+        COIN_MARKETCAP_API_KEY: Joi.string().required(),
       }),
     }),
     TypeOrmModule.forRoot({
