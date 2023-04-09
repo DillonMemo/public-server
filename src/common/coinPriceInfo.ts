@@ -83,7 +83,6 @@ const coinPriceInfo = async (
               +response.data[CoinIds.GMT].quote.USD.price.toFixed(4),
             ];
     }
-    console.log('response', gst, gstBsc, gstEth, gmt);
 
     return {
       gst,

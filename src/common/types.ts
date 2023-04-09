@@ -39,3 +39,24 @@ export enum CoinIds {
   GST_BSC = '20236',
   GST_ETH = '21152',
 }
+
+/** 필수, 선택 체크 해보기... */
+export type Sneaker = {
+  id: number; // 고유 ID
+  otd: number; // 상품 ID (목록 노출 ID)
+  time: number;
+  propID: number;
+  img: string;
+  dataId: number;
+  sellPrice: number; // 판매 GMT
+  hp: number; // 신발 HP
+  level: number; // 신발 Level
+  quality: number; // 1: common, 2: uncommon, 3: rara, 4: epic, 5: legend
+  mint: number;
+  addRatio: number;
+  lifeRatio: number;
+  v1: number;
+  v2: number;
+  speedMax: number;
+  speedMin: number;
+};
