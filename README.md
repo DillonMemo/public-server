@@ -69,3 +69,5 @@ quality
 
 
 ## figma plugin server
+
+영상 편집 기능 플러그인 개발?
