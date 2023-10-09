@@ -3,8 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import got from 'got';
 import { hash_password } from 'pkg/stepn_session';
+import { convertObjectToAPIString } from 'src/common';
 import coinPriceInfo from 'src/common/coinPriceInfo';
-import { Quote } from 'src/common/types';
+import { Chain, Order, Quality, Type } from 'src/common/stepn/stepn.enum';
+import { Quote } from 'src/common/stepn/stepn.types';
 
 @Injectable()
 export class ScheduleService {
@@ -39,10 +41,10 @@ export class ScheduleService {
         this.activationUsers = Math.floor(
           walkerUsers + joggerUsers + runnerUsers + trainerUsers,
         );
-        console.log(
-          new Date().toLocaleString() + 'cronActivationUser',
-          this.activationUsers,
-        );
+        console.log(new Date().toLocaleString() + ' cronActivationUser', {
+          activationUsers: this.activationUsers,
+          prevDis: this.prevDis,
+        });
       }
 
       this.prevDis = dis || 0;
@@ -52,16 +54,84 @@ export class ScheduleService {
   }
 
   /**
-   * 30분마다 ...
+   * 15분마다 아이템 정보를 최신화 합니다.
+   * {@link https://apilb.stepn.com/run/orderlist?saleId=1&order=2001&chain=103&page=0&otd=&type=&gType=&quality=&level=0&bread=0 DefaultURL}
    */
-  @Cron(CronExpression.EVERY_30_MINUTES)
-  // async cronDashboard(): Promise<void> {
-  //   try {
-  //     const response = await got.get()
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // }
+  @Cron('0 */5 * * * *')
+  async cronOrderList(): Promise<void> {
+    try {
+      const map = new Map();
+      for (let i = 0; i < this.PAGE; i++) {
+        const params = convertObjectToAPIString({
+          order: Order.lowestPrice,
+          chain: Chain.SOL,
+          page: i,
+          otd: undefined,
+          type: Type.walker,
+          gType: undefined,
+          quality: Quality.common,
+          level: 0,
+          bread: 0,
+        });
+
+        const json: { code: number; data: any[] } = await got
+          .get(`${process.env.STEPN_API_URL}run/orderlist?${params}`, {
+            http2: true,
+          })
+          .json();
+
+        console.log('first', json);
+        if (json.data.length > 0) {
+          for (const item of json.data) map.set(item.id, item);
+        } else {
+          console.log('first break :', i);
+          break;
+        }
+      }
+
+      for (let j = 0; j < this.PAGE; j++) {
+        const params = convertObjectToAPIString({
+          order: Order.highestPrice,
+          chain: Chain.SOL,
+          page: j,
+          otd: undefined,
+          type: Type.walker,
+          gType: undefined,
+          quality: Quality.common,
+          level: 0,
+          bread: 0,
+        });
+
+        const json: { code: number; data: any[] } = await got
+          .get(`${process.env.STEPN_API_URL}run/orderlist?${params}`, {
+            http2: true,
+          })
+          .json();
+
+        console.log('second', json);
+
+        if (json.data.length > 0) {
+          for (const item of json.data) map.set(item.id, item);
+        } else {
+          console.log('second break :', j);
+          break;
+        }
+      }
+
+      console.log(
+        new Date().toLocaleString(),
+        '매 15분 마다 실행!!',
+        Array.from(map).length,
+      );
+      // const response = await got.get(
+      //   `${process.env.STEPN_API_URL}run/login?${Object.entries(params)
+      //     .join('&')
+      //     .replace(/,/g, '=')}`,
+      // );
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   /**
    * 1시간마다 코인 정보를 가져옵니다.
@@ -114,9 +184,9 @@ export class ScheduleService {
       };
 
       const response = await got.get(
-        `https://apilb.stepn.com/run/login?${Object.entries(params)
-          .join('&')
-          .replace(/,/g, '=')}`,
+        `${process.env.STEPN_API_URL}run/login?${convertObjectToAPIString(
+          params,
+        )}`,
       );
 
       if (response.statusCode !== 200)

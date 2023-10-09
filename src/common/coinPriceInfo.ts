@@ -1,5 +1,5 @@
 import got from 'got';
-import { CoinIds, CoinResponse, Quote } from './types';
+import { CoinIds, CoinResponse, Quote } from './stepn/stepn.types';
 
 /**
  * 3일간의 코인 기록을 저장합니다.

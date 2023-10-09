@@ -1,3 +1,8 @@
+/**
+ * Stepn 마켓 데이터를 활용하기 위해 필요한 타입들을 정의 하는 스크립트 입니다.
+ * {@link https://m.stepn.com/ StepnMarket}
+ * {@link https://pro.coinmarketcap.com/ CoinmarketCap}
+ */
 export type CoinResponse = { data: Coin };
 
 type CoinName =
